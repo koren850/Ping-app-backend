@@ -1,3 +1,4 @@
+const mongo = require('./mongoCode.json');
 module.exports = {
-  dbURL: 'mongodb+srv://koren:0951@cluster0.rhpy1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+  dbURL: mongo.key,
 }
