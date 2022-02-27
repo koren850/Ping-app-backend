@@ -6,8 +6,7 @@ const ObjectId = require('mongodb').ObjectId
 
 module.exports = {
     query,
-    getById,
-    getByUsername,
+    getBySite,
     remove,
     update,
     add
@@ -28,34 +27,17 @@ async function query() {
     }
 }
 
-async function getById(userId) {
+async function getBySite(site) {
     try {
-        const collection = await dbService.getCollection('user')
-        const user = await collection.findOne({ _id: ObjectId(userId) })
-        delete user.password
-
-        user.givenReviews = await pingService.query({ byUserId: ObjectId(user._id) })
-        user.givenReviews = user.givenReviews.map(review => {
-            delete review.byUser
-            return review
-        })
-
-        return user
+        const collection = await dbService.getCollection('ping')
+        const siteStats = await collection.find({ site }).toArray()
+        return siteStats
     } catch (err) {
-        logger.error(`while finding user ${userId}`, err)
+        logger.error(`while getting site ${site}`, err)
         throw err
     }
 }
-async function getByUsername(username) {
-    try {
-        const collection = await dbService.getCollection('user')
-        const user = await collection.findOne({ username })
-        return user
-    } catch (err) {
-        logger.error(`while finding user ${username}`, err)
-        throw err
-    }
-}
+
 
 async function remove(userId) {
     try {

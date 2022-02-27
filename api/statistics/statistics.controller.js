@@ -24,7 +24,21 @@ async function addStat(req, res) {
     }
 }
 
+async function getSpecificStat(req, res) {
+    try {
+        const { site } = req.body
+        const siteStats = await statisticsService.getBySite(site)
+        res.send(siteStats)
+    } catch (err) {
+        logger.error('Failed to get statistics', err)
+        res.status(500).send({ err: 'Failed to get statistics' })
+    }
+}
+
+
+
 module.exports = {
     getStats,
-    addStat
+    addStat,
+    getSpecificStat
 }
