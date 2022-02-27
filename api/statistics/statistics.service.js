@@ -9,7 +9,8 @@ module.exports = {
     getBySite,
     remove,
     update,
-    add
+    add,
+    getPingObj
 }
 
 async function query() {
@@ -79,24 +80,30 @@ async function add(ping) {
     }
 }
 
-function _buildCriteria(filterBy) {
-    const criteria = {}
-    if (filterBy.txt) {
-        const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
-        criteria.$or = [
-            {
-                username: txtCriteria
-            },
-            {
-                fullname: txtCriteria
-            }
-        ]
-    }
-    if (filterBy.minBalance) {
-        criteria.score = { $gte: filterBy.minBalance }
-    }
-    return criteria
+function getPingObj(data) {
+    let received = 0
+    let lost = 0
+    const pings = {}
+    data.results.forEach((ping, idx) => {
+        if (ping.time) received++;
+        else if (ping.err) lost
+        pings[idx] = ping.time
+    })
+    return { site: data.address, date: _convertTime(), stats: { pings, maximum: data.max, minimum: data.min, average: data.avg, sent: data.results.length, lost, received } }
 }
+
+
+function _convertTime() {
+    return new Date().toLocaleTimeString('heb-IS', {
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    })
+}
+
 
 
 

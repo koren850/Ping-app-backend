@@ -15,7 +15,8 @@ async function getStats(req, res) {
 
 async function addStat(req, res) {
     try {
-        const ping = req.body
+        const data = req.body
+        const ping = statisticsService.getPingObj(data)
         const statistics = await statisticsService.add(ping)
         res.send(statistics)
     } catch (err) {
@@ -34,8 +35,6 @@ async function getSpecificStat(req, res) {
         res.status(500).send({ err: 'Failed to get statistics' })
     }
 }
-
-
 
 module.exports = {
     getStats,
